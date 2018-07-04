@@ -116,25 +116,53 @@ namespace July1
 
         public void UsersACSWithTodosDSC(int id)
         {
-            var orderedUsers = users.OrderBy(u => u.Name);
-            foreach(var user in orderedUsers)
+            var orderedUsers = users.Select(u => new
             {
-                Console.WriteLine($"{user.Name}");
-                foreach(var todo in user.Todos)
-                    Console.WriteLine(todo.Name);
-                Console.WriteLine();
+                user = u,
+                posts = u.Posts.OrderByDescending(p => p.Title)
+            }).OrderBy(u => u.user.Name);
+            foreach(var item in orderedUsers)
+            {
+                Console.WriteLine(item.user.ToString());
+                foreach(var post in item.posts)
+                    Console.WriteLine(post.ToString());
             }
         }
         public void UsersInfo(int id)
         {
+            var result = users.Where(u => u.Id == id).Select(u => new
+            {
+                user = u,
+                lastPost = u.Posts.OrderByDescending(p => p.CreatedAt).First(),
+                comments = u.Posts.OrderByDescending(p => p.CreatedAt).First().Comments.Count,
+                todos = u.Todos.Where(t => t.IsComplete == false).Count(),
+                popularComment = u.Posts.OrderBy(p => p.Comments.Where(c=>c.Body.Length>80).Count()).Last(),
+                likedPost=u.Posts.OrderBy(p=>p.Likes).Last()
+            }).First();
+            Console.WriteLine(result.user.ToString());
+            Console.WriteLine(result.lastPost);
+            Console.WriteLine(result.comments);
+            Console.WriteLine(result.todos);
+            Console.WriteLine(result.popularComment);
+            Console.WriteLine($"{result.likedPost}, likes ={result.likedPost.Likes}");
 
         }
 
         public void PostsInfo(int id)
         {
-
+            var result = users.SelectMany(u => u.Posts.Where(p => p.Id == id).Select(p => new
+            {
+                post = p,
+                longestComment = p.Comments.OrderBy(c => c.Body.Length).Last(),
+                likedComment = p.Comments.OrderBy(c => c.Likes).Last(),
+                commentsCount = p.Comments.Where(c => c.Likes == 0 || c.Body.Length < 80).Count()
+            })).First();
+            Console.WriteLine(result.post.ToString());
+            Console.WriteLine(result.longestComment.ToString());
+            Console.WriteLine($"{result.likedComment.ToString()}, Likes: {result.likedComment.Likes}");
+            Console.WriteLine(result.commentsCount);
         }
-
+    
 
     }
 }

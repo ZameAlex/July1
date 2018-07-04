@@ -20,7 +20,7 @@ namespace July1.Hierarhy
 
         public override string ToString()
         {
-            return base.ToString();
+            return $"ID:{Id}\nName:{Name}\n";
         }
     }
 }
