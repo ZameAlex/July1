@@ -47,12 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hierarhy\Address.cs" />
     <Compile Include="Hierarhy\Comment.cs" />
     <Compile Include="Hierarhy\Post.cs" />
     <Compile Include="Hierarhy\Todo.cs" />
     <Compile Include="Hierarhy\User.cs" />
-    <Compile Include="Menu.cs" />
     <Compile Include="MenuClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

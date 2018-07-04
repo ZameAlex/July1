@@ -12,6 +12,8 @@ namespace July1
         static void Main(string[] args)
         {
             Service service = new Service();
+            service.CreateHierarhy().Wait();
+            service.UsersACSWithTodosDSC(0);
             var MenuClass = new MenuClass(service.GetID, service.GetMethods());
             while (true)
             {

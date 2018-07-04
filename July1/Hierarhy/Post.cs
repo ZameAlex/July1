@@ -16,5 +16,10 @@ namespace July1.Hierarhy
         public int Likes { get; set; }
 
         public List<Comment> Comments { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id:{this.Id} | Created at:{this.CreatedAt} | Title:{this.Title} | Body:{this.Body}";
+        }
     }
 }

@@ -12,12 +12,13 @@ namespace July1
     class Service
     {
         public HttpClient Client { get; private set; }
+        List<User> users;
         public Service()
         {
            
         }
 
-        public async void CreateHierarhy()
+        public async Task CreateHierarhy()
         {
             try
             {
@@ -28,43 +29,47 @@ namespace July1
                 string responseBody = await result.Content.ReadAsStringAsync();
                 Newtonsoft.Json.JsonSerializerSettings settings = new Newtonsoft.Json.JsonSerializerSettings();
                 settings.DateFormatString = "YYYY-MM-DDTHH:mm:ss.FFFZ";
-                List<User> users = Newtonsoft.Json.JsonConvert.DeserializeObject<List<User>>(responseBody,settings);
-                foreach(var item in users)
-                {
-                    Console.WriteLine(item.Name);
-                }
+
+                users = Newtonsoft.Json.JsonConvert.DeserializeObject<List<User>>(responseBody,settings);
+
+                result = await Client.GetAsync(Client.BaseAddress + "comments");
+                result.EnsureSuccessStatusCode();
+                responseBody = await result.Content.ReadAsStringAsync();
+                var comments = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Comment>>(responseBody, settings);
+
+                result = await Client.GetAsync(Client.BaseAddress + "posts");
+                result.EnsureSuccessStatusCode();
+                responseBody = await result.Content.ReadAsStringAsync();
+                var posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(responseBody, settings);
+                posts.ForEach(p => p.Comments = comments.Where(c => c.PostId == p.Id).ToList());
+
+                users.ForEach(u => u.Posts = posts.Where(p => p.UserId == u.Id).ToList());
+
+                result = await Client.GetAsync(Client.BaseAddress + "todos");
+                result.EnsureSuccessStatusCode();
+                responseBody = await result.Content.ReadAsStringAsync();
+                var todos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Todo>>(responseBody, settings);
+
+                users.ForEach(u => u.Todos = todos.Where(t => t.UserId == u.Id).ToList());
+
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
         }
-    }
-}
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace July1
-{
-    class Service
-    {
-     
-        //List<Users>
         public MenuClass.MenuMethod[] GetMethods()
         {
-           return new MenuClass.MenuMethod[]
-           {
+            return new MenuClass.MenuMethod[]
+            {
                 this.CommentsUnderUserPost,
                 this.CommentUnderUserPostBodyMoreThen50,
                 this.CompletedTodosByUser,
                 this.UsersACSWithTodosDSC,
                 this.UsersInfo,
                 this.PostsInfo
-           };
-        }   
+            };
+        }
         public int GetID()
         {
             Console.WriteLine("Enter id, please");
@@ -73,7 +78,7 @@ namespace July1
             {
                 id = Convert.ToInt32(Console.ReadLine());
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -82,22 +87,43 @@ namespace July1
 
         public void CommentsUnderUserPost(int id)
         {
-
+            var result = users.Single(u => u.Id == id).Posts.Select(x => new { post = x, count = x.Comments.Count });
+            Console.WriteLine($"Posts of user {id}");
+            foreach (var item in result)
+            {
+                Console.WriteLine($"Post:\n{item.post.ToString()}\nComments count:{item.count}");
+            }
         }
 
         public void CommentUnderUserPostBodyMoreThen50(int id)
         {
-
+            var result = users.Single(u => u.Id == id).Posts.SelectMany(x => x.Comments.Where(p => p.Body.Length > 50));
+            foreach (var item in result)
+            {
+                Console.WriteLine(item.ToString());
+            }
         }
 
         public void CompletedTodosByUser(int id)
         {
-
+            var result = users.Single(u => u.Id == id).Todos.Where(t => t.IsComplete == true).Select(r => new { id = r.Id, name = r.Name });
+            Console.WriteLine($"Completed todos of user {id}");
+            foreach (var item in result)
+            {
+                Console.WriteLine($"{item.id} | {item.name}");
+            }
         }
 
         public void UsersACSWithTodosDSC(int id)
         {
-
+            var orderedUsers = users.OrderBy(u => u.Name);
+            foreach(var user in orderedUsers)
+            {
+                Console.WriteLine($"{user.Name}");
+                foreach(var todo in user.Todos)
+                    Console.WriteLine(todo.Name);
+                Console.WriteLine();
+            }
         }
         public void UsersInfo(int id)
         {

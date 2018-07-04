@@ -14,5 +14,10 @@ namespace July1.Hierarhy
         public int UserId { get; set; }
         public int PostId { get; set; }
         public int Likes { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id:{this.Id} | User: {UserId}, Post: {PostId}, Body: {Body}";
+        }
     }
 }
