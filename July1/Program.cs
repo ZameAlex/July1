@@ -10,6 +10,9 @@ namespace July1
     {
         static void Main(string[] args)
         {
+            Service service = new Service();
+            service.CreateHierarhy();
+            Console.ReadKey();
         }
     }
 }
