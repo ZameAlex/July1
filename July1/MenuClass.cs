@@ -26,7 +26,8 @@ namespace July1
             Methods = new List<MenuMethod>();
             Methods.AddRange(methods);
             ItemColor = ConsoleColor.White;
-            SelectionColor = ConsoleColor.Yellow;
+            SelectionColor = ConsoleColor.Blue;
+            Show();
         }
 
         private int top;
@@ -34,6 +35,7 @@ namespace July1
 
         public void Show()
         {
+            Console.Clear();
             Console.BackgroundColor = ConsoleColor.Blue;
             Console.WriteLine("Press Esc to exit");
             Console.WriteLine("Press Backspace to return back");
@@ -71,7 +73,10 @@ namespace July1
                     Console.ResetColor();
                     if (SelectedItem >= 0 && SelectedItem < Methods.Count)
                     {
-                        Methods[SelectedItem](GetID());
+                        if (SelectedItem == 3)
+                            Methods[SelectedItem](-1);
+                        else
+                            Methods[SelectedItem](GetID());
                         SelectedItem = -1;
                     }
                     break;

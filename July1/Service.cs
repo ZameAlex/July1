@@ -72,6 +72,7 @@ namespace July1
         }
         public int GetID()
         {
+            Console.Clear();
             Console.WriteLine("Enter id, please");
             int id = 1;
             try
