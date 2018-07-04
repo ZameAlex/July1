@@ -12,6 +12,7 @@ namespace July1
         public delegate int EnterId();
 
         private List<MenuMethod> Methods;
+        private List<string> DisplayItems;
         private EnterId GetID;
 
         public ConsoleColor ItemColor { get; private set; }
@@ -27,7 +28,11 @@ namespace July1
             Methods.AddRange(methods);
             ItemColor = ConsoleColor.White;
             SelectionColor = ConsoleColor.Blue;
-            Show();
+        }
+
+        public void SetDisplayNames(string[] names)
+        {
+            DisplayItems = names.ToList();
         }
 
         private int top;
@@ -42,7 +47,7 @@ namespace July1
             Console.WriteLine("Warning, if it is first menu, program will closed");
             Console.ResetColor();
             currentTop = top = Console.CursorTop;
-            for (int i = 0; i < Methods.Count; i++)
+            for (int i = 0; i < DisplayItems.Count; i++)
             {
                 if (i == 0)
                 {
@@ -52,7 +57,7 @@ namespace July1
                     Console.ResetColor();
                     Console.ForegroundColor = ItemColor;
                 }
-                Console.WriteLine(Methods[i].Method.Name);
+                Console.WriteLine(DisplayItems[i]);
             }
             Console.ResetColor();
         }
@@ -97,7 +102,7 @@ namespace July1
         {
             Console.ForegroundColor = ItemColor;
             Console.SetCursorPosition(0, currentTop);
-            Console.WriteLine(Methods[SelectedItem].Method.Name);
+            Console.WriteLine(DisplayItems[SelectedItem]);
             SelectedItem = SelectedItem == Methods.Count - 1 ? 0 : SelectedItem + 1;
             if (SelectedItem == 0)
                 currentTop = top;
@@ -105,7 +110,7 @@ namespace July1
                 currentTop++;
             Console.ForegroundColor = SelectionColor;
             Console.SetCursorPosition(0, currentTop);
-            Console.WriteLine(Methods[SelectedItem].Method.Name);
+            Console.WriteLine(DisplayItems[SelectedItem]);
             Console.SetCursorPosition(0, currentTop);
         }
 
@@ -113,7 +118,7 @@ namespace July1
         {
             Console.ForegroundColor = ItemColor;
             Console.SetCursorPosition(0, currentTop);
-            Console.WriteLine(Methods[SelectedItem].Method.Name);
+            Console.WriteLine(DisplayItems[SelectedItem]);
             SelectedItem = SelectedItem == 0 ? Methods.Count - 1 : SelectedItem - 1;
             if (Methods.Count - 1 == SelectedItem)
                 currentTop = top + Methods.Count - 1;
@@ -121,7 +126,7 @@ namespace July1
                 currentTop--;
             Console.ForegroundColor = SelectionColor;
             Console.SetCursorPosition(0, currentTop);
-            Console.WriteLine(Methods[SelectedItem].Method.Name);
+            Console.WriteLine(DisplayItems[SelectedItem]);
             Console.SetCursorPosition(0, currentTop);
 
         }

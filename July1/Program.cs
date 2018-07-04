@@ -1,4 +1,5 @@
-﻿using System;
+﻿using July1.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,9 +12,10 @@ namespace July1
     {
         static void Main(string[] args)
         {
-            Service service = new Service();
-            service.CreateHierarhy().Wait();
+            var service = new IOService();
             var MenuClass = new MenuClass(service.GetID, service.GetMethods());
+            MenuClass.SetDisplayNames(service.GetNames());
+            MenuClass.Show();
             while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey();
